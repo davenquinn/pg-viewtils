@@ -1,6 +1,7 @@
 import os
 from os import path
 from click import secho
+from re import sub, compile
 from sqlalchemy.exc import ProgrammingError, IntegrityError
 
 def query_to_dataframe(db, filename_or_query, **kwargs):
@@ -21,6 +22,7 @@ def query_to_dataframe(db, filename_or_query, **kwargs):
 
     return read_sql(sql,db,**kwargs)
 
+expr = compile('/ AS$/')
 
 def pretty_print(sql, **kwargs):
     for line in sql.split("\n"):
@@ -28,6 +30,8 @@ def pretty_print(sql, **kwargs):
             if not line.startswith(i):
                 continue
             start = line.split("(")[0].strip()
+            if start[-3:] == " AS":
+                start = start[:-3]
             secho(start, **kwargs)
             return
 
