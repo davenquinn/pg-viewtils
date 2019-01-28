@@ -2,7 +2,15 @@ import os
 from os import path
 from click import secho
 from re import sub, compile
+
+from sqlalchemy import  MetaData
 from sqlalchemy.exc import ProgrammingError, IntegrityError
+from sqlalchemy.schema import Table
+
+def reflect_table(db, tablename, schema='public', **kwargs):
+    meta = MetaData(schema=schema)
+    return Table(tablename, meta,
+        autoload=True, autoload_with=db, **kwargs)
 
 def query_to_dataframe(db, filename_or_query, **kwargs):
     """
